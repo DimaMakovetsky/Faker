@@ -34,13 +34,22 @@ namespace Faker
         public object Create(Type t)
         {
 
-            //typeof(t) newObject = new t();
+            object toGenInst;
 
-            object toCreate;
-            if (ToGenerateAbstract(t, out toCreate))
-                return toCreate;
-            if (ToGenerateWithValue(t, out toCreate))
-                return toCreate;
+            if (ToGenerateAbstract(t, out toGenInst))
+                return toGenInst;
+
+            if (ToGenerateWithValue(t, out toGenInst))
+                return toGenInst;
+
+            if (ToGenerateArray(t, out toGenInst))
+                return toGenInst;
+            if (ToGenerateWithValue(t, out toGenInst))
+                return toGenInst;
+            if (ToGenerateWithValue(t, out toGenInst))
+                return toGenInst;
+            if (ToGenerateWithValue(t, out toGenInst))
+                return toGenInst;
             return default;
         }
         private bool ToGenerateAbstract(Type t, out object toCreate)
@@ -59,6 +68,17 @@ namespace Faker
                 return true;
             }
             return false;
+        }
+        private bool ToGenerateArray(Type type, out object toCreate)
+        {
+            toCreate = null;
+
+            if (!type.IsArray)
+                return false;
+
+            toCreate = (new ArrayGenerator(this, type)).GetNewValue();
+
+            return true;
         }
     }
 }
