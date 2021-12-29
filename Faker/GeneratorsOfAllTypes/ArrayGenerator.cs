@@ -18,7 +18,10 @@ namespace Faker.GeneratorsOfAllTypes
         {
             var elementType = arrType.GetElementType();
             if (elementType == null)
+            {
+                Console.WriteLine("Huper Cringe");
                 return null;
+            }
             var length = new Random().Next(0, 9);
             var result = Array.CreateInstance(elementType, length);
             for (int i = 0; i < length; i++)

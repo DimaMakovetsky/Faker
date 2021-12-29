@@ -36,14 +36,19 @@ namespace Faker
 
             object toGenInst;
 
+                //Console.WriteLine("Cringe");
             if (ToGenerateAbstract(t, out toGenInst))
                 return toGenInst;
-
+            //Console.WriteLine("Cringe2");
             if (ToGenerateWithValue(t, out toGenInst))
                 return toGenInst;
-
+            //Console.WriteLine("Cringe3");
             if (ToGenerateArray(t, out toGenInst))
+            {
                 return toGenInst;
+            }
+            //Console.WriteLine("Cringe4");
+
             if (ToGenerateWithValue(t, out toGenInst))
                 return toGenInst;
             if (ToGenerateWithValue(t, out toGenInst))
@@ -72,12 +77,19 @@ namespace Faker
         private bool ToGenerateArray(Type type, out object toCreate)
         {
             toCreate = null;
-
             if (!type.IsArray)
                 return false;
-
             toCreate = (new ArrayGenerator(this, type)).GetNewValue();
-
+            return true;
+        }
+        private bool ToGenerateEnum(Type type, out object toCreate)
+        {
+            toCreate = null;
+            if (!type.IsEnum)
+                return false;
+            Array values = type.GetEnumValues();
+            Random random = new Random();
+            toCreate = values.GetValue(random.Next(0, values.Length));
             return true;
         }
     }

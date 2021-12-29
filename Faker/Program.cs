@@ -28,6 +28,11 @@ namespace Faker
             Console.WriteLine(date);
             byte by = fakerObject.Create<byte>();
             Console.WriteLine(by);
+            Array array = fakerObject.Create<int[]>();
+            foreach (var item in array)
+            {
+                Console.WriteLine(item);
+            }
             // CreatableClass1 creatable = fakerObject.Create<CreatableClass1>();
             //Console.WriteLine(creatable.Ass);
 
