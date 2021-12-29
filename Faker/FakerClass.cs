@@ -36,7 +36,7 @@ namespace Faker
 
             object toGenInst;
 
-                //Console.WriteLine("Cringe");
+            //Console.WriteLine("Cringe");
             if (ToGenerateAbstract(t, out toGenInst))
                 return toGenInst;
             //Console.WriteLine("Cringe2");
@@ -49,7 +49,7 @@ namespace Faker
             }
             //Console.WriteLine("Cringe4");
 
-            if (ToGenerateWithValue(t, out toGenInst))
+            if (ToGenerateList(t, out toGenInst))
                 return toGenInst;
             if (ToGenerateWithValue(t, out toGenInst))
                 return toGenInst;
@@ -90,6 +90,42 @@ namespace Faker
             Array values = type.GetEnumValues();
             Random random = new Random();
             toCreate = values.GetValue(random.Next(0, values.Length));
+            return true;
+        }
+        private bool ToGenerateList(Type type, out object instance)
+        {
+            instance = null;
+            if (!type.IsGenericType)
+                return false;
+
+            if (!(type.GetGenericTypeDefinition() == typeof(List<>)))
+                return false;
+
+            var innerTypes = type.GetGenericArguments();
+            Type gType = innerTypes[0];
+            int count = new Random().Next(1, 20);
+            try
+            {
+                instance = Activator.CreateInstance(type);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            object[] arr = new object[1];
+            for (int i = 0; i < count; ++i)
+            {
+                arr[0] = Create(gType);
+                try
+                {
+                    type.GetMethod("Add").Invoke(instance, arr);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
     }
