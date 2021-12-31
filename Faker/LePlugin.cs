@@ -10,27 +10,55 @@ namespace Faker
 {
     public class LePlugin
     {
-        
-        private Dictionary<Type, IGenerator> generatorDictionary;
-        public LePlugin(Dictionary<Type,IGenerator> dic)
+
+        private static readonly List<string> PluginPaths = new List<string>
         {
-            generatorDictionary = dic;
+            "D:/Cal/2021/СПП/Faker/UintGener/bin/Debug/netcoreapp3.1/UintGener.dll",
+
+            //"C:/Users/vanya/source/repos/Faker/FloatGenerator/bin/Debug/net5.0/ULongGeneratorPlugin.dll",
+ //           "C:/Users/vanya/source/repos/Faker/UIntGeneratorPlugin/bin/Debug/net5.0/UIntGeneratorPlugin.dll"
+        };
+        private Dictionary<Type, IGenerator> generators;
+
+        public LePlugin(Dictionary<Type, IGenerator> gen)
+        {
+            this.generators = gen;
         }
-        public void LoadPluginsCaller()
+
+        public void LoadPluginGenerators()
         {
-            //Assembly ass = Assembly;
+            foreach (string file in PluginPaths)
+            {
+                if (!File.Exists(file))
+                {
+                    TextWriter error = Console.Error;
+                    error.Write("Failed to load plugin " + file);
+                }
+                else
+                {
+                    Assembly assembly = Assembly.LoadFrom(file);
+                    LoadPluginGenerator(assembly);
+                }
+            }
         }
-        private void LoadPlugins(Assembly ass)
+
+        private void LoadPluginGenerator(Assembly plugin)
         {
-            Type genType = ass.GetTypes().FirstOrDefault(type => typeof(IGenerator).IsAssignableFrom(type));
-            if (genType == null)
+            Type generatorType = plugin.GetTypes().FirstOrDefault(type => typeof(IGenerator).IsAssignableFrom(type));
+
+            if (generatorType == null)
                 return;
-            if (genType.FullName == null)
+
+            if (generatorType.FullName == null)
                 return;
-            if (!genType.IsClass)
+
+            if (!generatorType.IsClass)
                 return;
-            if (ass.CreateInstance(genType.FullName) is IGenerator genPlugin)
-                generatorDictionary.Add(genPlugin.GenerType, genPlugin);
+
+            if (plugin.CreateInstance(generatorType.FullName) is IGenerator generatorPlugin)
+            {
+                this.generators.Add(generatorPlugin.GenerType, generatorPlugin);
+            }
         }
     }
 }

@@ -46,6 +46,8 @@ namespace Faker
             User user = fakerObject.Create<User>();
             string userJson = JsonConvert.SerializeObject(user, Formatting.Indented);
             Console.WriteLine(userJson);
+            var uInt = fakerObject.Create<UInt32>();
+            Console.WriteLine(uInt);
             //Enum en = fakerObject.Create<Enum>();
             //Console.WriteLine(en.ToString());
             /*foreach (var item in Enum.GetValues(en))

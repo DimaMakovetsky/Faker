@@ -27,7 +27,8 @@ namespace Faker
                 {typeof(long),  new LongGenerator()},
                 {typeof(short),  new ShortGenerator()}
             };
-            //LePlugin lePlugin = new LePlugin(generatorDictionary);
+            LePlugin lePlugin = new LePlugin(generatorDictionary);
+            lePlugin.LoadPluginGenerators();
             circularReferences = new List<Type>();
         }
         public T Create<T>()
