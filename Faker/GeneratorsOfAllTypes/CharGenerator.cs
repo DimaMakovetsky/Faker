@@ -9,7 +9,7 @@ namespace Faker.GeneratorsOfAllTypes
         public Type GenerType => typeof(char);
         public object GetNewValue()
         {
-            return (char)new Random().Next(0, 255);    
+            return (char)new Random().Next(65, 122);    
         }
     }
 }

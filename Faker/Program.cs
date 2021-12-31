@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-
+using Newtonsoft.Json;
 namespace Faker
 {
     class Program
@@ -41,6 +41,11 @@ namespace Faker
             {
                 Console.WriteLine(item);
             }
+
+            //var faker = new Faker();
+            User user = fakerObject.Create<User>();
+            string userJson = JsonConvert.SerializeObject(user, Formatting.Indented);
+            Console.WriteLine(userJson);
             //Enum en = fakerObject.Create<Enum>();
             //Console.WriteLine(en.ToString());
             /*foreach (var item in Enum.GetValues(en))
