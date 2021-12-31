@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Faker.GeneratorsOfAllTypes;
+using System.Runtime.Serialization;
+using System.Reflection;
 namespace Faker
 {
-    class FakerClass:IFaker
+    public class FakerClass : IFaker
     {
-       
+        private readonly List<Type> circularReferences;
+
         private Dictionary<Type, IGenerator> generatorDictionary;
         public FakerClass()
         {
@@ -20,12 +23,12 @@ namespace Faker
                 {typeof(string),  new StringGenerator()},
                 {typeof(DateTime),  new DateGenerator()},
                 {typeof(byte),  new ByteGenerator()},
-                {typeof(float),  new FloatGenerator() }, 
+                {typeof(float),  new FloatGenerator() },
                 {typeof(long),  new LongGenerator()},
                 {typeof(short),  new ShortGenerator()}
             };
             //LePlugin lePlugin = new LePlugin(generatorDictionary);
-            
+            circularReferences = new List<Type>();
         }
         public T Create<T>()
         {
@@ -51,7 +54,7 @@ namespace Faker
 
             if (ToGenerateList(t, out toGenInst))
                 return toGenInst;
-            if (ToGenerateWithValue(t, out toGenInst))
+            if (ToGenerateCls(t, out toGenInst))
                 return toGenInst;
             if (ToGenerateWithValue(t, out toGenInst))
                 return toGenInst;
@@ -127,6 +130,114 @@ namespace Faker
             }
 
             return true;
+        }
+        private bool ToGenerateCls(Type type, out object instance)
+        {
+            instance = null;
+
+            if (!type.IsClass && !type.IsValueType)
+                return false;
+
+            if (circularReferences.Contains(type))
+            {
+                instance = default;
+                return true;
+            }
+
+            circularReferences.Add(type);
+
+            if (ToGenerateConstruct(type, out instance))
+            {
+                GenerateFillProps(instance, type);
+                GenerateFillFields(instance, type);
+
+                circularReferences.Remove(type);
+
+                return true;
+            }
+            else
+            {
+                instance = FormatterServices.GetUninitializedObject(type);
+                GenerateFillProps(instance, type);
+                GenerateFillFields(instance, type);
+
+                circularReferences.Remove(type);
+                return true;
+            }
+
+            //return false;
+        }
+
+        private bool ToGenerateConstruct(Type type, out object instance)
+        {
+            instance = null;
+            var ctns = type.GetConstructors();
+
+            if (ctns.Length == 0)
+                return false;
+
+            Array.Sort(ctns, Comparer<ConstructorInfo>.Create((c1, c2) =>
+                    c2.GetParameters().Length.CompareTo(c1.GetParameters().Length)));
+
+            foreach (var locCtn in ctns)
+            {
+                if (locCtn.IsPublic)
+                {
+                    var prms = GenerateConstructorParams(locCtn);
+                    try
+                    {
+                        instance = locCtn.Invoke(prms);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void GenerateFillProps(object instance, Type type)
+        {
+            var props = type.GetProperties();
+
+            foreach (var prop in props)
+            {
+                if (!prop.CanWrite)
+                    continue;
+
+                if (prop.GetSetMethod() == null)
+                    continue;
+
+                prop.SetValue(instance, Create(prop.PropertyType));
+            }
+        }
+
+        private void GenerateFillFields(object instance, Type type)
+        {
+            var fields = type.GetFields();
+
+            foreach (var field in fields)
+            {
+                if (!field.IsPublic)
+                    continue;
+
+                field.SetValue(instance, Create(field.FieldType));
+            }
+        }
+
+        private object[] GenerateConstructorParams(ConstructorInfo constructor)
+        {
+            var prms = constructor.GetParameters();
+            object[] generated = new object[prms.Length];
+            for (int i = 0; i < prms.Length; i++)
+            {
+                var p = prms[i];
+                generated[i] = Create(p.ParameterType);
+            }
+            return generated;
         }
     }
 }
