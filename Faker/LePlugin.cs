@@ -14,7 +14,7 @@ namespace Faker
         private static readonly List<string> PluginPaths = new List<string>
         {
             "D:/Cal/2021/СПП/Faker/UintGener/bin/Debug/netcoreapp3.1/UintGener.dll",
-
+            "D:/Cal/2021/СПП/Faker/ULongGener/bin/Debug/netcoreapp3.1/ULongGener.dll"
             //"C:/Users/vanya/source/repos/Faker/FloatGenerator/bin/Debug/net5.0/ULongGeneratorPlugin.dll",
  //           "C:/Users/vanya/source/repos/Faker/UIntGeneratorPlugin/bin/Debug/net5.0/UIntGeneratorPlugin.dll"
         };

@@ -48,6 +48,8 @@ namespace Faker
             Console.WriteLine(userJson);
             var uInt = fakerObject.Create<UInt32>();
             Console.WriteLine(uInt);
+            var uLong = fakerObject.Create<ulong>();
+            Console.WriteLine(uLong);
             //Enum en = fakerObject.Create<Enum>();
             //Console.WriteLine(en.ToString());
             /*foreach (var item in Enum.GetValues(en))
