@@ -32,17 +32,11 @@ namespace Faker
             Array array = fakerObject.Create<int[]>();
             Console.WriteLine("Array: ");
             foreach (var item in array)
-            {
                 Console.WriteLine(item);
-            }
             Console.WriteLine("List: "); 
             List<int> ass = fakerObject.Create<List<int>>();
             foreach (var item in ass)
-            {
                 Console.WriteLine(item);
-            }
-
-            //var faker = new Faker();
             User user = fakerObject.Create<User>();
             string userJson = JsonConvert.SerializeObject(user, Formatting.Indented);
             Console.WriteLine(userJson);
@@ -50,17 +44,6 @@ namespace Faker
             Console.WriteLine(uInt);
             var uLong = fakerObject.Create<ulong>();
             Console.WriteLine(uLong);
-            //Enum en = fakerObject.Create<Enum>();
-            //Console.WriteLine(en.ToString());
-            /*foreach (var item in Enum.GetValues(en))
-            {
-                Console.WriteLine(item);
-            }*/
-            // CreatableClass1 creatable = fakerObject.Create<CreatableClass1>();
-            //Console.WriteLine(creatable.Ass);
-
-            //Console.WriteLine(creatable.GetType().GetFields());
-
         }
     }
 }
